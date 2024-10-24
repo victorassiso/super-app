@@ -2,6 +2,7 @@
 import { Edit, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import { models } from '@/assets/modelos'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,39 +16,24 @@ import {
 } from '@/components/ui/select'
 import type { Camera, Project } from '@/models/entities'
 
-const models = [
-  { id: '4', name: 'Detecção de Pessoas' },
-  { id: '1', name: 'Detecção de Veículos' },
-  { id: '2', name: 'Reconhecimento Facial' },
-  { id: '3', name: 'Contagem de Pessoas' },
-]
-
 interface SidePanelProps {
   selectedCameras: Camera[]
   setSelectedCameras: (cameras: Camera[]) => void
   projects: Project[]
   setProjects: (projects: Project[]) => void
-  iconColors: Record<string, { label: string; hex: string }>
 }
 export function SidePanel({
   selectedCameras,
   setSelectedCameras,
   projects,
   setProjects,
-  iconColors,
 }: SidePanelProps) {
   const [selectedModel, setSelectedModel] = useState<string | null>(null)
   const [projectName, setProjectName] = useState<string>('')
   const [editingProject, setEditingProject] = useState<Project | null>(null)
-  const [selectedColor, setSelectedColor] = useState<string>('#4f4f4f')
 
   const handleCreateOrUpdateProject = () => {
-    if (
-      projectName &&
-      selectedModel &&
-      selectedCameras.length > 0 &&
-      selectedColor
-    ) {
+    if (projectName && selectedModel && selectedCameras.length > 0) {
       if (editingProject) {
         setProjects(
           projects.map((p) =>
@@ -57,7 +43,6 @@ export function SidePanel({
                   name: projectName,
                   model: selectedModel,
                   cameras: selectedCameras,
-                  color: selectedColor,
                 }
               : p,
           ),
@@ -69,12 +54,10 @@ export function SidePanel({
           name: projectName,
           model: selectedModel,
           cameras: selectedCameras,
-          color: selectedColor,
         }
         setProjects([...projects, newProject])
       }
       setProjectName('')
-      setSelectedModel(null)
       setSelectedCameras([])
     }
   }
@@ -133,43 +116,6 @@ export function SidePanel({
           </Select>
         </div>
         <div>
-          <Label htmlFor="modelSelect">Selecione a Cor</Label>
-          <Select
-            onValueChange={(value) => setSelectedColor(value)}
-            value={selectedColor || undefined}
-          >
-            <SelectTrigger id="colorSelect">
-              <SelectValue placeholder="Selecione uma cor" />
-            </SelectTrigger>
-            <SelectContent className="w-full">
-              {Object.entries(iconColors).map(([key, value]) => (
-                <SelectItem key={key} value={key} className="">
-                  <div className="flex gap-2 items-center">
-                    <div
-                      className="size-3.5 bg-red-500 flex items-center justify-center"
-                      style={{ backgroundColor: value.hex }}
-                    />
-                    <span className="font-medium inline-block">
-                      {value.label}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        {/* <div>
-          <Label htmlFor="color">Cor</Label>
-          <Input
-            id="color"
-            type="color"
-            defaultValue={selectedColor}
-            onChange={(e) => {
-              setSelectedColor(e.target.value)
-            }}
-          />
-        </div> */}
-        <div>
           <Label>Câmeras Selecionadas: {selectedCameras.length}</Label>
         </div>
         <Button
@@ -194,9 +140,6 @@ export function SidePanel({
             <div
               key={project.id}
               className="p-4 bg-card rounded flex justify-between items-center"
-              style={{
-                backgroundColor: `${iconColors[project.color as keyof typeof iconColors].hex}80`, // Adding opacity
-              }}
             >
               <div>
                 <h3 className="font-semibold">{project.name}</h3>

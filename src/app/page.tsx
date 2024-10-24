@@ -13,7 +13,6 @@ export default function App() {
     selectedCameras,
     setProjects,
     setSelectedCameras,
-    iconColors,
   } = useCameraLayer()
 
   return (
@@ -29,7 +28,6 @@ export default function App() {
         setSelectedCameras={setSelectedCameras}
         projects={projects}
         setProjects={setProjects}
-        iconColors={iconColors}
       />
     </div>
   )

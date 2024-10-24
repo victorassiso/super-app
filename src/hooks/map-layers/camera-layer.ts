@@ -2,7 +2,7 @@ import type { LayersList, PickingInfo } from '@deck.gl/core'
 import { IconLayer } from '@deck.gl/layers'
 import { useMemo, useState } from 'react'
 
-import cameraIconAtlas from '@/assets/camera-icon-atlas-multicolor.png'
+import cameraIconAtlas from '@/assets/camera-icon-atlas.png'
 import { cameras } from '@/assets/cameras'
 import type { Camera, Project } from '@/models/entities'
 
@@ -90,88 +90,11 @@ export function useCameraLayer(): UseCameraLayer {
             height: 48,
             mask: false,
           },
-          green: {
-            x: 0,
-            y: 48,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
-          'light-green': {
-            x: 48,
-            y: 48,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
-          purple: {
-            x: 0,
-            y: 96,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
-          lavender: {
-            x: 48,
-            y: 96,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
-          orange: {
-            x: 0,
-            y: 144,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
-          yellow: {
-            x: 48,
-            y: 144,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
-          red: {
-            x: 0,
-            y: 192,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
-          'light-blue': {
-            x: 48,
-            y: 192,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
-          'dark-teal': {
-            x: 0,
-            y: 240,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
-          gray: {
-            x: 48,
-            y: 240,
-            width: 48,
-            height: 48,
-            mask: false,
-          },
         },
         getIcon: (d) => {
           if (selectedCameras.find((c) => c.CameraCode === d.CameraCode)) {
             return 'highlighted'
           }
-
-          const cameraProject = projects.find((p) => {
-            const camera = p.cameras.find((c) => c.CameraCode === d.CameraCode)
-            return !!camera
-          })
-
-          if (cameraProject) return cameraProject.color
 
           return 'default'
         },
@@ -188,7 +111,7 @@ export function useCameraLayer(): UseCameraLayer {
           })
         },
       }),
-    [projects, selectedCameras],
+    [selectedCameras],
   )
 
   return {
