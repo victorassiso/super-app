@@ -12,4 +12,5 @@ export type Project = {
   name: string
   model: string
   cameras: Camera[]
+  active: boolean
 }

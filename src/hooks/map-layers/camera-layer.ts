@@ -19,7 +19,29 @@ interface UseCameraLayer {
 export function useCameraLayer(): UseCameraLayer {
   const [hoverInfo, setHoverInfo] = useState<PickingInfo<Camera> | null>(null)
   const [selectedCameras, setSelectedCameras] = useState<Camera[]>([])
-  const [projects, setProjects] = useState<Project[]>([])
+  const [projects, setProjects] = useState<Project[]>([
+    {
+      id: '1',
+      name: 'Projeto 1',
+      cameras: cameras.slice(0, 5),
+      model: 'Detecção de Pessoas',
+      active: true,
+    },
+    {
+      id: '2',
+      name: 'Projeto 2',
+      cameras: cameras.slice(5, 10),
+      model: 'Detecção de Pessoas',
+      active: true,
+    },
+    {
+      id: '3',
+      name: 'Projeto 3',
+      cameras: cameras.slice(10, 50),
+      model: 'Detecção de Algomerações',
+      active: false,
+    },
+  ])
 
   const iconColors = {
     green: {

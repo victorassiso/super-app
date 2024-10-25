@@ -25,7 +25,7 @@ export default function Map({ layers, hoverInfo }: MapProps) {
       <DeckGL initialViewState={RIO_VIEWSTATE} controller layers={layers}>
         <MapGL
           mapStyle={'mapbox://styles/mapbox/light-v10'}
-          mapboxAccessToken={env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
+          mapboxAccessToken={env.MAPBOX_ACCESS_TOKEN}
         />
         <Tooltip info={hoverInfo} />
       </DeckGL>
