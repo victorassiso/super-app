@@ -8,39 +8,223 @@ body {
 
 @layer base {
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --background: 200 7% 8%;
+    --foreground: 180 9% 98%;
+
+    --card: 180 6% 10%;
+    --card-foreground: 180 9% 98%;
+
+    --popover: 180 6% 10%;
+    --popover-foreground: 180 9% 98%;
+
+    --primary: 194 88% 54%;
+    --primary-foreground: 240 9% 2%;
+
+    --secondary: 195 8% 19%;
+    --secondary-foreground: 180 9% 98%;
+
+    --muted: 191 7% 29%;
+    --muted-foreground: 195 8% 49%;
+
+    --accent: 194 71% 19%;
+    --accent-foreground: 180 9% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 192 8% 12%;
+    --input: 195 9% 18%;
+    --ring: 194 88% 40%;
+
+    --radius: 0.5rem;
+
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --radius: 0.5rem;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: theme('colors.input');
+      border-radius: 9999px;
+    }
+    &::-webkit-scrollbar-corner {
+      background: transparent;
+    }
   }
-  body {
+  html {
     @apply bg-background text-foreground;
   }
+  /* Disable number input arrows */
+  /* Chrome, Safari, Edge, Opera */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* Mozila */
+  input[type='number'] {
+    -moz-appearance: textfield !important;
+  }
+
+  /* Disable autofill decoration */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    transition:
+    background-color 500000s ease-in-out 0s,
+    color 500000s ease-in-out 0s;
+  }
+
+  /* Typography */
+  h1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl
+  }
+
+  h2 {
+    @apply scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0
+  }
+
+  h3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight
+  }
+
+  h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight
+  }
+
+  p {
+    @apply [&:not(:first-child)]:mt-2
+  }
 }
+
+@layer components {
+  .page-content {
+    @apply h-screen p-4 pt-8 w-full;
+  }
+
+  .A4 {
+    @apply m-auto flex h-[29cm] w-[21cm] flex-col gap-4 border-border bg-white px-[1.5cm] py-[1cm];
+  }
+
+  .absolute-x-centered {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+  }
+
+  .absolute-y-centered {
+    @apply absolute top-0 bottom-0 mt-auto mb-auto;
+  }
+
+  .absolute-centered {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .list-decoration {
+    @apply list-inside list-disc;
+
+    ul, dl {
+      @apply list-inside list-disc ml-6;
+    }
+
+    ul ul, dl dl  {
+      @apply list-inside list-disc ml-12;
+    }
+  }
+
+  .code-highlight {
+    @apply rounded-md bg-secondary px-[0.34rem] py-[0.17rem] font-bold text-primary text-[85%];
+  }
+
+  .markdown {
+    @apply mx-auto max-w-3xl;
+
+    h1 {
+      @apply pb-[0.6rem] border-b mb-4 text-[2.125rem]
+    }
+
+    h2 {
+      @apply pb-[0.45rem] mt-6 border-b mb-4 text-2xl
+    }
+
+    h3 {
+      @apply mt-6 mb-4 text-xl
+    }
+
+    h4 {
+      @apply mt-6 mb-4 text-base
+    }
+
+    p {
+      @apply mb-4
+    }
+
+    code {
+      @apply code-highlight;
+    }
+
+    ul {
+      @apply list-disc pl-8;
+    }
+
+    ol {
+      @apply list-decimal pl-8;
+    }
+  }
+
+  .CollapsibleContent {
+    overflow: hidden;
+  }
+  .CollapsibleContent[data-state='open'] {
+    animation: slideDown 300ms ease-out;
+  }
+  .CollapsibleContent[data-state='closed'] {
+    animation: slideUp 300ms ease-out;
+  }
+  
+  @keyframes slideDown {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      height: var(--radix-collapsible-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  .AccordionChevron {
+    transition: transform 300ms;
+  }
+  .AccordionTrigger[data-state='open'] > .AccordionChevron {
+    transform: rotate(180deg);
+  }
+  .custom-shadow {
+    box-shadow: 0px 0px 10px 5px rgb(255 255 255 / 0.05);
+  }
+}
+
