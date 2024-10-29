@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import { Spinner } from '@/components/custom/spinner'
@@ -28,18 +28,25 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { VisionAIMapContext } from '@/contexts/vision-ai/map-context'
 import type { Model, Project } from '@/models/entities'
 import { getModelsAction } from '@/server-cache/models'
 import { getProjectAction } from '@/server-cache/project'
+import { setToastDataCookie } from '@/utils/others/cookie-handlers'
 import { redirect } from '@/utils/others/redirect'
 
 import {
   type ProjectForm,
   projectFormSchema,
 } from '../../components/schemas/project-schema'
-import { setToastDataCookie } from './actions'
+import { updateProjectAction } from './actions'
 
 export default function ProjectDetails() {
+  const {
+    layers: {
+      cameras: { setSelectedCameras, selectedCameras },
+    },
+  } = useContext(VisionAIMapContext)
   const [loading, setLoading] = useState(true)
   const pathname = usePathname()
   const id = pathname.replace('/vision-ai/project/', '')
@@ -75,7 +82,7 @@ export default function ProjectDetails() {
         setValue('description', projectsResponse.description)
         setValue('model', projectsResponse.model)
         setValue('enabled', projectsResponse.enabled)
-        setValue('cameras', projectsResponse.camera_ids)
+        setSelectedCameras(projectsResponse.camera_ids)
         setLoading(false)
       } else {
         await handleRedirect()
@@ -87,7 +94,15 @@ export default function ProjectDetails() {
 
   function onSubmit(data: ProjectForm) {
     // TODO: Implementar a lógica de atualização do projeto
-    console.log(data)
+    updateProjectAction({
+      id,
+      name: data.name,
+      model: data.model,
+      cameras_id: selectedCameras,
+      enable: data.enabled,
+    }).then((project) => {
+      redirect(`/vision-ai/project/${project.id}`)
+    })
   }
 
   return loading ? (
@@ -162,8 +177,13 @@ export default function ProjectDetails() {
             />
           </div>
         </div>
-        <div className="">
-          {/* TODO: Tabela/Lista de câmeras + botão para navegar para localização */}
+        <div className="flex flex-col gap-1">
+          <Label>Câmeras</Label>
+          <div className="flex flex-col gap-1">
+            {selectedCameras.map((cameraId, index) => (
+              <span key={index}>{cameraId}</span>
+            ))}
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-2">

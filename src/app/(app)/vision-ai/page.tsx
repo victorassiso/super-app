@@ -17,11 +17,8 @@ export default async function SidePanel() {
       <h3 className="text-2xl font-bold">Projetos</h3>
       <ScrollArea className="h-[calc(100%-3rem)]" type="hover">
         <div className="flex flex-col gap-2 h-full">
-          {projects.map((project) => (
-            <Card
-              key={project.id}
-              className="p-6 flex justify-between items-center"
-            >
+          {projects.map((project, index) => (
+            <Card key={index} className="p-6 flex justify-between items-center">
               <div className="flex gap-1 flex-col">
                 <span className="block">{project.name}</span>
                 <span className="block">{project.model}</span>

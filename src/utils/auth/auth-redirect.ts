@@ -1,19 +1,19 @@
+'use server'
+
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 const publicPaths = ['/auth']
 
 interface AuthRedirectWrapperProps {
-  children: React.ReactNode
   pathname: string
 }
 
-export default async function AuthRedirectWrapper({
-  children,
-  pathname,
-}: AuthRedirectWrapperProps) {
+export async function authRedirect({ pathname }: AuthRedirectWrapperProps) {
   const cookieStore = await cookies()
   const isAuthenticated = !!cookieStore.get('token')
+  console.log('isAuthenticated', isAuthenticated)
+  console.log(pathname)
 
   if (isAuthenticated && publicPaths.includes(pathname)) {
     redirect('/')
@@ -22,6 +22,4 @@ export default async function AuthRedirectWrapper({
   if (!isAuthenticated && !publicPaths.includes(pathname)) {
     redirect('/auth/sign-in')
   }
-
-  return <>{children}</>
 }

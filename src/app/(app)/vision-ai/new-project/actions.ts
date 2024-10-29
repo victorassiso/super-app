@@ -1,4 +1,5 @@
 'use server'
+
 import { env } from '@/env'
 import type { Project } from '@/models/entities'
 
@@ -11,7 +12,7 @@ interface CreateProject {
   time_end?: string
 }
 
-export async function createProject(props: CreateProject) {
+export async function createProjectAction(props: CreateProject) {
   const response = await fetch(`${env.VISION_AI_API_URL}/project`, {
     method: 'POST',
     headers: {

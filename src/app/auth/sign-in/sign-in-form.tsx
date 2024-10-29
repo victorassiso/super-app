@@ -1,6 +1,6 @@
 'use client'
+
 import { AlertTriangle, icons } from 'lucide-react'
-import { redirect } from 'next/navigation'
 import { useState } from 'react'
 
 import { Spinner } from '@/components/custom/spinner'
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useFormState } from '@/hooks/utils/use-form-state'
+import { redirect } from '@/utils/others/redirect'
 
 import { signInAction } from './actions'
 

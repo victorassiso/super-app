@@ -1,20 +1,40 @@
 'use server'
 
-import { cookies } from 'next/headers'
+import { env } from '@/env'
+import type { Project } from '@/models/entities'
 
-interface setToastDataCookieProps {
-  type: 'error' | 'warning' | 'success' | 'info'
-  message: string
+interface UpdateProject {
+  id: string
+  name?: string
+  model?: string
+  config?: Record<string, string> | null
+  cameras_id?: string[]
+  time_start?: string
+  time_end?: string
+  discord_webhook_id?: string
+  discord_webhook_token?: string
+  enable?: boolean
 }
 
-export async function setToastDataCookie({
-  message,
-  type,
-}: setToastDataCookieProps) {
-  const cookieStore = await cookies()
-  const toastData = {
-    type,
-    message,
-  }
-  cookieStore.set('toastData', JSON.stringify(toastData), { path: '/' })
+export async function updateProjectAction(props: UpdateProject) {
+  const response = await fetch(`${env.VISION_AI_API_URL}/project/${props.id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: props.name,
+      model: props.model,
+      config: props.config,
+      cameras_id: props.cameras_id,
+      time_start: props.time_start,
+      time_end: props.time_end,
+      discord_webhook_id: props.discord_webhook_id,
+      discord_webhook_token: props.discord_webhook_token,
+      enable: props.enable,
+    }),
+  })
+  const project: Project = await response.json()
+
+  return project
 }
