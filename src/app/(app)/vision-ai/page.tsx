@@ -22,7 +22,7 @@ export default async function SidePanel() {
           >
             <div className="flex gap-1 flex-col">
               <span className="block">{project.name}</span>
-              <span className="block">{project.model.name}</span>
+              <span className="block">{project.model}</span>
               <div>
                 {project.enabled ? (
                   <span className="bg-emerald-600 px-2 py-1 rounded-full">

@@ -101,7 +101,9 @@ export default function ProjectDetails() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/vision-ai">Projetos</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/vision-ai">Projetos</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
