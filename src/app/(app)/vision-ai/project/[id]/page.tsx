@@ -1,11 +1,11 @@
 'use client'
+
 import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
-import { models } from '@/assets/models'
-import { projects } from '@/assets/projects'
 import { Spinner } from '@/components/custom/spinner'
 import {
   Breadcrumb,
@@ -28,6 +28,9 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import type { Model, Project } from '@/models/entities'
+import { getModelsAction } from '@/server-cache/models'
+import { getProjectAction } from '@/server-cache/project'
 import { redirect } from '@/utils/others/redirect'
 
 import {
@@ -40,7 +43,12 @@ export default function ProjectDetails() {
   const [loading, setLoading] = useState(true)
   const pathname = usePathname()
   const id = pathname.replace('/vision-ai/project/', '')
-  const project = projects.find((project) => project.id === id)
+  const [project, setProject] = useState<Project | undefined>(undefined)
+  const [models, setModels] = useState<Model[] | undefined>(undefined)
+
+  const { handleSubmit, register, control, setValue } = useForm<ProjectForm>({
+    resolver: zodResolver(projectFormSchema),
+  })
 
   // TODO: Implementar a lógica de busca do projeto
   useEffect(() => {
@@ -50,28 +58,32 @@ export default function ProjectDetails() {
         message: `O projeto de id=${id} não existe.`,
       })
 
-      redirect('/vision-ai')
-      setLoading(false)
+      await redirect('/vision-ai')
     }
 
-    if (!project) {
-      handleRedirect()
-    } else {
-      setLoading(false)
-    }
-  }, [])
+    async function initializeData() {
+      getModelsAction().then((data) => {
+        setModels(data)
+      })
 
-  const { handleSubmit, register, control } = useForm<ProjectForm>({
-    resolver: zodResolver(projectFormSchema),
-    defaultValues: {
-      name: project!.name,
-      description: project!.description,
-      model: {
-        id: project!.model!.id,
-        name: project!.model!.name,
-      },
-    },
-  })
+      const projectsResponse = await getProjectAction(id)
+
+      if (projectsResponse) {
+        setProject(projectsResponse)
+
+        setValue('name', projectsResponse.name)
+        setValue('description', projectsResponse.description)
+        setValue('model', projectsResponse.model)
+        setValue('enabled', projectsResponse.enabled)
+        setValue('cameras', projectsResponse.camera_ids)
+        setLoading(false)
+      } else {
+        await handleRedirect()
+      }
+    }
+
+    initializeData()
+  }, [id, setValue])
 
   function onSubmit(data: ProjectForm) {
     // TODO: Implementar a lógica de atualização do projeto
@@ -115,15 +127,15 @@ export default function ProjectDetails() {
               render={({ field }) => (
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value?.id}
+                  defaultValue={field.value}
                 >
                   <SelectTrigger id="model" className="w-full">
                     <SelectValue placeholder="Selecione um modelo" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {models.map((model) => (
-                        <SelectItem key={model.id} value={model.id}>
+                      {models?.map((model, index) => (
+                        <SelectItem key={index} value={model.name}>
                           {model.name}
                         </SelectItem>
                       ))}
@@ -137,12 +149,12 @@ export default function ProjectDetails() {
             <Label htmlFor="active">Ativo</Label>
             <Controller
               control={control}
-              name="active"
+              name="enabled"
               render={({ field }) => (
                 <Switch
-                  id="active"
+                  id="enabled"
                   checked={field.value}
-                  onChange={field.onChange}
+                  onCheckedChange={field.onChange}
                 />
               )}
             />
@@ -153,8 +165,12 @@ export default function ProjectDetails() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <Button variant="secondary">Atualizar Projeto</Button>
-        <Button variant="ghost">Candelar Edição</Button>
+        <Button variant="secondary" type="submit">
+          Atualizar Projeto
+        </Button>
+        <Button variant="ghost" asChild>
+          <Link href="/vision-ai">Candelar Edição</Link>
+        </Button>
       </div>
     </form>
   )

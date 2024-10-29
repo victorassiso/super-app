@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
 import { Controller, useForm } from 'react-hook-form'
 
 import { models } from '@/assets/models'
@@ -32,14 +33,27 @@ import {
 } from '../components/schemas/project-schema'
 
 export default function Page() {
-  const { register, control } = useForm<ProjectForm>({
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ProjectForm>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
-      active: true,
+      enabled: true,
     },
   })
+
+  function onSubmit(data: ProjectForm) {
+    // TODO: Implementar a lógica de criação do projeto
+    console.log(data)
+  }
   return (
-    <form className="flex flex-col gap-2 h-full px-1 py-2">
+    <form
+      className="flex flex-col gap-2 h-full px-1 py-2"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="h-full">
         <Breadcrumb>
           <BreadcrumbList>
@@ -55,23 +69,37 @@ export default function Page() {
         <h3 className="mt-4 mb-2 text-2xl font-bold">Novo Projeto</h3>
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-2">
-            <div className="space-y-0.5">
-              <Label htmlFor="name">Nome</Label>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2 h-3.5">
+                <Label htmlFor="name">Nome</Label>
+                {errors.name && (
+                  <span className="text-xs text-destructive">
+                    {errors.name.message}
+                  </span>
+                )}
+              </div>
               <Input id="name" {...register('name')} />
             </div>
-            <div className="space-y-0.5">
+            <div className="flex flex-col gap-1">
               <Label htmlFor="description">Descrição</Label>
               <Textarea id="description" {...register('description')} />
             </div>
-            <div className="space-y-0.5">
-              <Label htmlFor="model">Modelo</Label>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2 h-3.5">
+                <Label htmlFor="model">Modelo</Label>
+                {errors.model && (
+                  <span className="text-xs text-destructive">
+                    {errors.model.message}
+                  </span>
+                )}
+              </div>
               <Controller
                 control={control}
                 name="model"
                 render={({ field }) => (
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value?.id}
+                    defaultValue={field.value}
                   >
                     <SelectTrigger id="model" className="w-full">
                       <SelectValue placeholder="Selecione um modelo" />
@@ -89,16 +117,16 @@ export default function Page() {
                 )}
               />
             </div>
-            <div className="space-y-0.5 flex items-center gap-2">
-              <Label htmlFor="active">Ativo</Label>
+            <div className="flex mt-1 items-center gap-2">
+              <Label htmlFor="enabled">Ativo</Label>
               <Controller
                 control={control}
-                name="active"
+                name="enabled"
                 render={({ field }) => (
                   <Switch
-                    id="active"
+                    id="enabled"
                     checked={field.value}
-                    onChange={field.onChange}
+                    onCheckedChange={field.onChange}
                   />
                 )}
               />
@@ -111,7 +139,9 @@ export default function Page() {
       </div>
       <div className="flex flex-col gap-2">
         <Button variant="secondary">Criar Projeto</Button>
-        <Button variant="ghost">Candelar</Button>
+        <Button variant="ghost" asChild>
+          <Link href="/vision-ai">Candelar</Link>
+        </Button>
       </div>
     </form>
   )

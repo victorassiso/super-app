@@ -1,10 +1,19 @@
-export type Camera = {
+export type RawCamera = {
   CameraCode: string
   CameraName: string
   CameraZone: string
   Latitude: number
   Longitude: number
   Streamming: string
+}
+
+export type Camera = {
+  id: string
+  name: string
+  zone: string
+  latitude: number
+  longitude: number
+  streamingUrl: string
 }
 
 export type RawProject = {
@@ -24,10 +33,7 @@ export type Project = {
   id: string
   name: string
   description: string
-  model: {
-    id: string
-    name: string
-  }
+  model: string
   config: Record<string, string>[] | null
   camera_ids: string[]
   start_time: string | null
@@ -35,4 +41,14 @@ export type Project = {
   discord_webhook_id: string
   discord_webhook_token: string
   enabled: true
+}
+
+export type RawModel = {
+  model: string
+  description: string
+}
+
+export type Model = {
+  name: string
+  description: string
 }

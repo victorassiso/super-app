@@ -1,3 +1,5 @@
+'use server'
+
 import { env } from '@/env'
 import type { Project, RawProject } from '@/models/entities'
 
@@ -11,10 +13,7 @@ export async function getProjectsAction() {
     id: rawProject.id,
     name: rawProject.name,
     description: rawProject.model,
-    model: {
-      id: rawProject.model,
-      name: rawProject.model,
-    },
+    model: rawProject.model,
     camera_ids: rawProject.cameras_id,
     config: rawProject.config,
     discord_webhook_id: rawProject.discord_webhook_id,
