@@ -18,7 +18,6 @@ export async function signIn({
   username,
   password,
 }: SignInRequest): Promise<SignInResponse> {
-  console.log('DEBUG SIGNIN START')
   const response = await api.post<SignInResponse>(
     `${env.GATEWAY_API_URL}/auth/token`,
     {

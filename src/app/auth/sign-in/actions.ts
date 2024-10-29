@@ -32,8 +32,6 @@ export async function signInAction(data: FormData) {
       password,
     })
 
-    console.log('DEBUG 1')
-
     const cookieStore = await cookies()
 
     cookieStore.set('token', accessToken, {
@@ -44,9 +42,7 @@ export async function signInAction(data: FormData) {
     })
   } catch (err) {
     // Log error
-    console.log('DEBUG 2')
     if (isApiError(err) && isGrantError(err)) {
-      console.log('DEBUG 3')
       const data = err.response?.config.data
         .replace(/(?<=username=).*?(?=&)/, '[REDACTED]')
         .replace(/(?<=password=).*/, '[REDACTED]')
@@ -64,16 +60,13 @@ export async function signInAction(data: FormData) {
 
       console.error(copy)
     } else {
-      console.log('DEBUG 4')
       console.error(err)
     }
 
-    console.log('DEBUG 5')
     const errorMessage = isGrantError(err)
       ? 'Credenciais inválidas'
       : genericErrorMessage
 
-    console.log('DEBUG 6')
     return {
       success: false,
       message: errorMessage,

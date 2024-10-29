@@ -7,10 +7,8 @@ import { queryClient } from './react-query'
 
 export const isApiError = axios.isAxiosError
 
-console.log('API INSTANCE')
-console.log({ env })
 export const api = axios.create({
-  baseURL: env.CIVITAS_API_URL,
+  baseURL: env.VISION_AI_API_URL,
 })
 
 api.interceptors.request.use(async (config) => {

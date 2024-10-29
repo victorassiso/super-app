@@ -1,18 +1,18 @@
-'use client'
 import { Pencil, Plus } from 'lucide-react'
 import Link from 'next/link'
 
-import { projects } from '@/assets/projects'
 import { Tooltip } from '@/components/custom/tooltip'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { useToastHandler } from '@/utils/others/toast-handler'
+import { getProjectsAction } from '@/server-cache/projects'
+import { ToastHandler } from '@/utils/others/toast-handler'
 
-export default function SidePanel() {
-  useToastHandler()
+export default async function SidePanel() {
+  const projects = await getProjectsAction()
 
   return (
     <div className="relative w-full h-full px-1 py-2 space-y-4">
+      <ToastHandler />
       <h3 className="text-2xl font-bold">Projetos</h3>
       <div className="space-y-2">
         {projects.map((project) => (
@@ -24,7 +24,7 @@ export default function SidePanel() {
               <span className="block">{project.name}</span>
               <span className="block">{project.model.name}</span>
               <div>
-                {project.active ? (
+                {project.enabled ? (
                   <span className="bg-emerald-600 px-2 py-1 rounded-full">
                     Ativo
                   </span>
