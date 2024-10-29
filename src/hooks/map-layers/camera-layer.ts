@@ -1,3 +1,5 @@
+'use client'
+
 import type { LayersList, PickingInfo } from '@deck.gl/core'
 import { IconLayer } from '@deck.gl/layers'
 import { useEffect, useMemo, useState } from 'react'
@@ -6,7 +8,7 @@ import cameraIconAtlas from '@/assets/camera-icon-atlas.png'
 import type { Camera } from '@/models/entities'
 import { getCamerasAction } from '@/server-cache/cameras'
 
-interface UseCameraLayer {
+export interface UseCameraLayer {
   hoverInfo: PickingInfo<Camera> | null
   setHoverInfo: (info: PickingInfo<Camera> | null) => void
   selectedCameras: Camera[]

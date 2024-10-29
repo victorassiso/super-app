@@ -2,9 +2,9 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
+import { useContext, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
-import { models } from '@/assets/models'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,8 +24,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { VisionAIMapContext } from '@/contexts/vision-ai/map-context'
+import { createProject } from '@/http/projects/create-project'
+import type { Model } from '@/models/entities'
+import { getModelsAction } from '@/server-cache/models'
+import { redirect } from '@/utils/others/redirect'
 
 import {
   type ProjectForm,
@@ -33,6 +37,11 @@ import {
 } from '../components/schemas/project-schema'
 
 export default function Page() {
+  const {
+    layers: {
+      cameras: { selectedCameras },
+    },
+  } = useContext(VisionAIMapContext)
   const {
     register,
     control,
@@ -45,10 +54,26 @@ export default function Page() {
     },
   })
 
-  function onSubmit(data: ProjectForm) {
+  const [models, setModels] = useState<Model[]>([])
+
+  async function onSubmit(data: ProjectForm) {
     // TODO: Implementar a lógica de criação do projeto
     console.log(data)
+    const project = await createProject({
+      name: data.name,
+      model: data.model,
+      cameras_id: selectedCameras.map((camera) => camera.id),
+    })
+    await redirect(`/vision-ai/project/${project.id}`)
   }
+
+  useEffect(() => {
+    async function fetchModels() {
+      const data = await getModelsAction()
+      setModels(data)
+    }
+    fetchModels()
+  }, [])
   return (
     <form
       className="flex flex-col gap-2 h-full px-1 py-2"
@@ -108,8 +133,8 @@ export default function Page() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {models.map((model) => (
-                          <SelectItem key={model.id} value={model.id}>
+                        {models.map((model, index) => (
+                          <SelectItem key={index} value={model.name}>
                             {model.name}
                           </SelectItem>
                         ))}
@@ -119,19 +144,13 @@ export default function Page() {
                 )}
               />
             </div>
-            <div className="flex mt-1 items-center gap-2">
-              <Label htmlFor="enabled">Ativo</Label>
-              <Controller
-                control={control}
-                name="enabled"
-                render={({ field }) => (
-                  <Switch
-                    id="enabled"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                )}
-              />
+            <div className="flex flex-col gap-1">
+              <Label>Câmeras</Label>
+              <div className="flex flex-col gap-1">
+                {selectedCameras.map((camera) => (
+                  <span key={camera.id}>{camera.id}</span>
+                ))}
+              </div>
             </div>
           </div>
           <div className="">
