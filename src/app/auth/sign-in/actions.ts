@@ -39,6 +39,8 @@ export async function signInAction(data: FormData) {
     cookieStore.set('token', accessToken, {
       path: '/',
       maxAge: expiresIn,
+      sameSite: 'none',
+      secure: true,
     })
   } catch (err) {
     // Log error
