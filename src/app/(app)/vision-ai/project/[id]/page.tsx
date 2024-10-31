@@ -44,7 +44,7 @@ import { updateProjectAction } from './actions'
 export default function ProjectDetails() {
   const {
     layers: {
-      cameras: { setSelectedCameras, selectedCameras },
+      cameras: { setSelectedCameras, selectedCameras, cameras },
     },
   } = useContext(VisionAIMapContext)
   const [loading, setLoading] = useState(true)
@@ -82,7 +82,11 @@ export default function ProjectDetails() {
         setValue('description', projectsResponse.description)
         setValue('model', projectsResponse.model)
         setValue('enabled', projectsResponse.enabled)
-        setSelectedCameras(projectsResponse.camera_ids)
+        setSelectedCameras(
+          cameras.filter((camera) =>
+            projectsResponse.camera_ids.includes(camera.id),
+          ),
+        )
         setLoading(false)
       } else {
         await handleRedirect()
@@ -98,7 +102,7 @@ export default function ProjectDetails() {
       id,
       name: data.name,
       model: data.model,
-      cameras_id: selectedCameras,
+      cameras_id: selectedCameras.map((camera) => camera.id),
       enable: data.enabled,
     })
   }
@@ -178,8 +182,8 @@ export default function ProjectDetails() {
         <div className="flex flex-col gap-1">
           <Label>Câmeras</Label>
           <div className="flex flex-col gap-1">
-            {selectedCameras.map((cameraId, index) => (
-              <span key={index}>{cameraId}</span>
+            {selectedCameras.map((camera, index) => (
+              <span key={index}>{camera.id}</span>
             ))}
           </div>
         </div>

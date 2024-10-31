@@ -35,8 +35,7 @@ import {
 } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
 import { VisionAIMapContext } from '@/contexts/vision-ai/map-context'
-import { Camera, type Model } from '@/models/entities'
-import { getCamerasAction } from '@/server-cache/cameras'
+import { type Model } from '@/models/entities'
 import { getModelsAction } from '@/server-cache/models'
 import { redirect } from '@/utils/others/redirect'
 
@@ -49,7 +48,7 @@ import { createProjectAction } from './actions'
 export default function Page() {
   const {
     layers: {
-      cameras: { selectedCameras: selectedCameraIds },
+      cameras: { selectedCameras },
     },
     flyTo,
   } = useContext(VisionAIMapContext)
@@ -66,8 +65,6 @@ export default function Page() {
   })
 
   const [models, setModels] = useState<Model[]>([])
-  const [cameras, setCameras] = useState<Camera[]>([])
-  const [selectedCameras, setSelectedCameras] = useState<Camera[]>([])
 
   async function onSubmit(data: ProjectForm) {
     // TODO: Implementar a lógica de criação do projeto
@@ -83,17 +80,9 @@ export default function Page() {
   useEffect(() => {
     async function fetchModels() {
       getModelsAction().then((data) => setModels(data))
-      getCamerasAction().then((data) => setCameras(data))
     }
     fetchModels()
   }, [])
-
-  useEffect(() => {
-    const filtered = cameras.filter((camera) =>
-      selectedCameraIds.includes(camera.id),
-    )
-    setSelectedCameras(filtered)
-  }, [selectedCameraIds])
 
   return (
     <form

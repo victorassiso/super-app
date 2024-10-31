@@ -9,15 +9,16 @@ import type { Camera } from '@/models/entities'
 import { getCamerasAction } from '@/server-cache/cameras'
 
 export interface UseCameraLayer {
+  cameras: Camera[]
   hoverInfo: PickingInfo<Camera> | null
   setHoverInfo: (info: PickingInfo<Camera> | null) => void
-  selectedCameras: string[]
-  setSelectedCameras: (cameras: string[]) => void
+  selectedCameras: Camera[]
+  setSelectedCameras: (cameras: Camera[]) => void
   layers: LayersList
 }
 export function useCameraLayer(): UseCameraLayer {
   const [hoverInfo, setHoverInfo] = useState<PickingInfo<Camera> | null>(null)
-  const [selectedCameras, setSelectedCameras] = useState<string[]>([])
+  const [selectedCameras, setSelectedCameras] = useState<Camera[]>([])
   const [cameras, setCameras] = useState<Camera[]>([])
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export function useCameraLayer(): UseCameraLayer {
           },
         },
         getIcon: (d) => {
-          if (selectedCameras.find((id) => id === d.id)) {
+          if (selectedCameras.find((c) => c.id === d.id)) {
             return 'highlighted'
           }
 
@@ -68,10 +69,10 @@ export function useCameraLayer(): UseCameraLayer {
         },
         onClick: (d) => {
           setSelectedCameras((prev) => {
-            if (prev.find((id) => id === d.object.id)) {
-              return prev.filter((id) => id !== d.object.id)
+            if (prev.find((c) => c.id === d.object.id)) {
+              return prev.filter((c) => c.id !== d.object.id)
             }
-            return [...prev, d.object.id]
+            return [...prev, d.object]
           })
         },
       }),
@@ -79,6 +80,7 @@ export function useCameraLayer(): UseCameraLayer {
   )
 
   return {
+    cameras,
     hoverInfo,
     setHoverInfo,
     selectedCameras,

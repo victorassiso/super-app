@@ -15,7 +15,7 @@ export function Tooltip({ info }: TooltipProps) {
         className="z-10 absolute pointer-events-none bg-card p-2 rounded-lg"
         style={{ top, left }}
       >
-        <span>{info.object.CameraName}</span>
+        <span>{info.object.name}</span>
       </div>
     )
   }
