@@ -1,7 +1,8 @@
 'use server'
 
+import { redirect } from 'next/navigation'
+
 import { env } from '@/env'
-import type { Project } from '@/models/entities'
 
 interface UpdateProject {
   id: string
@@ -17,7 +18,7 @@ interface UpdateProject {
 }
 
 export async function updateProjectAction(props: UpdateProject) {
-  const response = await fetch(`${env.VISION_AI_API_URL}/project/${props.id}`, {
+  await fetch(`${env.VISION_AI_API_URL}/project/${props.id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -34,7 +35,6 @@ export async function updateProjectAction(props: UpdateProject) {
       enable: props.enable,
     }),
   })
-  const project: Project = await response.json()
 
-  return project
+  redirect('/vision-ai')
 }

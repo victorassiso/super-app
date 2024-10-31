@@ -92,16 +92,14 @@ export default function ProjectDetails() {
     initializeData()
   }, [id, setValue])
 
-  function onSubmit(data: ProjectForm) {
+  async function onSubmit(data: ProjectForm) {
     // TODO: Implementar a lógica de atualização do projeto
-    updateProjectAction({
+    await updateProjectAction({
       id,
       name: data.name,
       model: data.model,
       cameras_id: selectedCameras,
       enable: data.enabled,
-    }).then((project) => {
-      redirect(`/vision-ai/project/${project.id}`)
     })
   }
 
