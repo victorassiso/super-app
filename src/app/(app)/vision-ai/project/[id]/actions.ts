@@ -8,7 +8,7 @@ interface UpdateProject {
   id: string
   name?: string
   model?: string
-  config?: Record<string, string> | null
+  model_config?: Record<string, string> | null
   cameras_id?: string[]
   time_start?: string
   time_end?: string
@@ -26,7 +26,7 @@ export async function updateProjectAction(props: UpdateProject) {
     body: JSON.stringify({
       name: props.name,
       model: props.model,
-      config: props.config,
+      model_config: props.model_config,
       cameras_id: props.cameras_id,
       time_start: props.time_start,
       time_end: props.time_end,

@@ -2,7 +2,13 @@
 
 import type { LayersList, PickingInfo } from '@deck.gl/core'
 import { IconLayer } from '@deck.gl/layers'
-import { useEffect, useMemo, useState } from 'react'
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import cameraIconAtlas from '@/assets/camera-icon-atlas.png'
 import type { Camera } from '@/models/entities'
@@ -14,12 +20,14 @@ export interface UseCameraLayer {
   setHoverInfo: (info: PickingInfo<Camera> | null) => void
   selectedCameras: Camera[]
   setSelectedCameras: (cameras: Camera[]) => void
+  setIsHoveringInfoCard: Dispatch<SetStateAction<boolean>>
   layers: LayersList
 }
 export function useCameraLayer(): UseCameraLayer {
   const [hoverInfo, setHoverInfo] = useState<PickingInfo<Camera> | null>(null)
   const [selectedCameras, setSelectedCameras] = useState<Camera[]>([])
   const [cameras, setCameras] = useState<Camera[]>([])
+  const [isHoveringInfoCard, setIsHoveringInfoCard] = useState(false)
 
   useEffect(() => {
     const fetchCameras = async () => {
@@ -65,7 +73,9 @@ export function useCameraLayer(): UseCameraLayer {
         },
         getPosition: (d) => [d.longitude, d.latitude],
         onHover: (d) => {
-          setHoverInfo(d)
+          if (!isHoveringInfoCard) {
+            setHoverInfo(d.object ? d : null)
+          }
         },
         onClick: (d) => {
           setSelectedCameras((prev) => {
@@ -76,6 +86,7 @@ export function useCameraLayer(): UseCameraLayer {
           })
         },
       }),
+
     [selectedCameras, cameras],
   )
 
@@ -85,6 +96,7 @@ export function useCameraLayer(): UseCameraLayer {
     setHoverInfo,
     selectedCameras,
     setSelectedCameras,
+    setIsHoveringInfoCard,
     layers: [baseLayer],
   }
 }

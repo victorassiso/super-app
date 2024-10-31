@@ -9,7 +9,7 @@ import { Map as MapGL, type MapRef } from 'react-map-gl'
 
 import { VisionAIMapContext } from '@/contexts/vision-ai/map-context'
 
-import { Tooltip } from './components/tooltip'
+import { CameraHoverCard } from './components/tooltip/components/camera-hover-card'
 
 interface MapProps {
   mapboxAccessToken: string
@@ -18,7 +18,7 @@ interface MapProps {
 export default function Map({ mapboxAccessToken }: MapProps) {
   const {
     layers: {
-      cameras: { layers, hoverInfo },
+      cameras: { layers, hoverInfo, setIsHoveringInfoCard },
     },
     viewState,
     setViewState,
@@ -41,13 +41,24 @@ export default function Map({ mapboxAccessToken }: MapProps) {
         layers={layers}
         viewState={viewState}
         onViewStateChange={onViewStateChange}
+        getCursor={({ isDragging, isHovering }) => {
+          if (isDragging) return 'grabbing'
+          else if (isHovering) {
+            // Actually clickable objects:
+            if (hoverInfo?.object) return 'pointer'
+          }
+          return 'grab'
+        }}
       >
         <MapGL
           ref={mapRef}
           mapStyle={'mapbox://styles/mapbox/light-v10'}
           mapboxAccessToken={mapboxAccessToken}
         />
-        <Tooltip info={hoverInfo} />
+        <CameraHoverCard
+          hoveredObject={hoverInfo}
+          setIsHoveringInfoCard={setIsHoveringInfoCard}
+        />
       </DeckGL>
     </div>
   )

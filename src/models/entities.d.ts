@@ -20,7 +20,7 @@ export type RawProject = {
   id: string
   name: string
   model: string
-  config: Record<string, string>[] | null
+  model_config: Record<string, string>[] | null
   cameras_id: string[]
   time_start: string | null
   time_end: string | null
@@ -34,7 +34,7 @@ export type Project = {
   name: string
   description: string
   model: string
-  config: Record<string, string>[] | null
+  model_config: Record<string, string>[] | null
   camera_ids: string[]
   start_time: string | null
   end_time: string | null

@@ -16,7 +16,7 @@ export async function getProjectAction(id: string) {
       description: rawProject.model,
       model: rawProject.model,
       camera_ids: rawProject.cameras_id,
-      config: rawProject.config,
+      model_config: rawProject.model_config,
       discord_webhook_id: rawProject.discord_webhook_id,
       discord_webhook_token: rawProject.discord_webhook_token,
       start_time: rawProject.time_start,
