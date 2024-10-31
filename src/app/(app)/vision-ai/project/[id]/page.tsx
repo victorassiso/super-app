@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Navigation } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useContext, useEffect, useState } from 'react'
@@ -27,6 +28,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
 import { VisionAIMapContext } from '@/contexts/vision-ai/map-context'
 import type { Model, Project } from '@/models/entities'
@@ -46,6 +55,7 @@ export default function ProjectDetails() {
     layers: {
       cameras: { setSelectedCameras, selectedCameras, cameras },
     },
+    flyTo,
   } = useContext(VisionAIMapContext)
   const [loading, setLoading] = useState(true)
   const pathname = usePathname()
@@ -57,7 +67,6 @@ export default function ProjectDetails() {
     resolver: zodResolver(projectFormSchema),
   })
 
-  // TODO: Implementar a lógica de busca do projeto
   useEffect(() => {
     async function handleRedirect() {
       await setToastDataCookie({
@@ -111,7 +120,7 @@ export default function ProjectDetails() {
     <Spinner />
   ) : (
     <form
-      className="flex flex-col gap-2 h-full px-1 py-2"
+      className="flex flex-col gap-2 h-full"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="h-full">
@@ -179,13 +188,41 @@ export default function ProjectDetails() {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-1">
-          <Label>Câmeras</Label>
-          <div className="flex flex-col gap-1">
-            {selectedCameras.map((camera, index) => (
-              <span key={index}>{camera.id}</span>
-            ))}
-          </div>
+        <div className="flex flex-col gap-1 mt-4 h-[420px]">
+          <Label>Câmeras Selecionadas:</Label>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">ID</TableHead>
+                <TableHead>Localidade</TableHead>
+                <TableHead className="text-right"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {selectedCameras.map((camera, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{camera.id}</TableCell>
+                  <TableCell>{camera.name}</TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      type="button"
+                      onClick={() =>
+                        flyTo({
+                          latitude: camera.latitude,
+                          longitude: camera.longitude,
+                          zoom: 16,
+                        })
+                      }
+                    >
+                      <Navigation className="shrink-0 size-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
       <div className="flex flex-col gap-2">

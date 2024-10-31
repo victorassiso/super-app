@@ -19,7 +19,7 @@ interface UpdateProject {
 
 export async function updateProjectAction(props: UpdateProject) {
   await fetch(`${env.VISION_AI_API_URL}/project/${props.id}`, {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
