@@ -8,11 +8,14 @@ import { useCallback, useContext, useRef } from 'react'
 import { Map as MapGL, type MapRef } from 'react-map-gl'
 
 import { VisionAIMapContext } from '@/contexts/vision-ai/map-context'
-import { env } from '@/env'
 
 import { Tooltip } from './components/tooltip'
 
-export default function Map() {
+interface MapProps {
+  mapboxAccessToken: string
+}
+
+export default function Map({ mapboxAccessToken }: MapProps) {
   const {
     layers: {
       cameras: { layers, hoverInfo },
@@ -42,7 +45,7 @@ export default function Map() {
         <MapGL
           ref={mapRef}
           mapStyle={'mapbox://styles/mapbox/light-v10'}
-          mapboxAccessToken={env.MAPBOX_ACCESS_TOKEN}
+          mapboxAccessToken={mapboxAccessToken}
         />
         <Tooltip info={hoverInfo} />
       </DeckGL>
