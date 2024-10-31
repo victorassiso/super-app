@@ -12,8 +12,6 @@ interface AuthRedirectWrapperProps {
 export async function authRedirect({ pathname }: AuthRedirectWrapperProps) {
   const cookieStore = await cookies()
   const isAuthenticated = !!cookieStore.get('token')
-  console.log('isAuthenticated', isAuthenticated)
-  console.log(pathname)
 
   if (isAuthenticated && publicPaths.includes(pathname)) {
     redirect('/')

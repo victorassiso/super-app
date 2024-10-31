@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Navigation } from 'lucide-react'
+import { Navigation, X } from 'lucide-react'
 import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -48,7 +48,7 @@ import { createProjectAction } from './actions'
 export default function Page() {
   const {
     layers: {
-      cameras: { selectedCameras },
+      cameras: { selectedCameras, setSelectedCameras },
     },
     flyTo,
   } = useContext(VisionAIMapContext)
@@ -67,8 +67,6 @@ export default function Page() {
   const [models, setModels] = useState<Model[]>([])
 
   async function onSubmit(data: ProjectForm) {
-    // TODO: Implementar a lógica de criação do projeto
-    console.log(data)
     const project = await createProjectAction({
       name: data.name,
       model: data.model,
@@ -86,7 +84,7 @@ export default function Page() {
 
   return (
     <form
-      className="flex flex-col gap-2 h-full max-h-screen px-1 py-2"
+      className="flex flex-col gap-2 h-full max-h-screen"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="h-full flex flex-col overflow-hidden">
@@ -153,14 +151,13 @@ export default function Page() {
               )}
             />
           </div>
-          <div className="flex flex-col gap-1 flex-1 overflow-hidden">
+          <div className="flex mt-4 flex-col gap-1 flex-1 overflow-hidden">
             <Label>Câmeras</Label>
             <div className="gap-1 flex flex-col overflow-y-scroll">
               <Table className="">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[100px]">ID</TableHead>
-                    <TableHead>Zona</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead className="text-right"></TableHead>
                   </TableRow>
@@ -169,9 +166,8 @@ export default function Page() {
                   {selectedCameras.map((camera, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{camera.id}</TableCell>
-                      <TableCell>{camera.zone}</TableCell>
                       <TableCell>{camera.name}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right flex items-center gap-1">
                         <Button
                           size="icon"
                           variant="ghost"
@@ -185,6 +181,18 @@ export default function Page() {
                           }
                         >
                           <Navigation className="size-3.5 shrink-0" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          type="button"
+                          onClick={() =>
+                            setSelectedCameras(
+                              selectedCameras.filter((c) => c.id !== camera.id),
+                            )
+                          }
+                        >
+                          <X className="size-3.5 shrink-0" />
                         </Button>
                       </TableCell>
                     </TableRow>

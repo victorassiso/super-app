@@ -5,10 +5,7 @@ import type { Project, RawProject } from '@/models/entities'
 
 export async function getProjectAction(id: string) {
   try {
-    console.log(env.VISION_AI_API_URL)
-    console.log(`${env.VISION_AI_API_URL}/project/${id}`)
     const data = await fetch(`${env.VISION_AI_API_URL}/project/${id}`)
-    console.log({ data })
 
     const rawProject: RawProject = await data.json()
 

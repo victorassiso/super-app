@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Navigation } from 'lucide-react'
+import { Navigation, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useContext, useEffect, useState } from 'react'
@@ -63,7 +63,13 @@ export default function ProjectDetails() {
   const [project, setProject] = useState<Project | undefined>(undefined)
   const [models, setModels] = useState<Model[] | undefined>(undefined)
 
-  const { handleSubmit, register, control, setValue } = useForm<ProjectForm>({
+  const {
+    handleSubmit,
+    register,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<ProjectForm>({
     resolver: zodResolver(projectFormSchema),
   })
 
@@ -106,7 +112,6 @@ export default function ProjectDetails() {
   }, [id, setValue])
 
   async function onSubmit(data: ProjectForm) {
-    // TODO: Implementar a lógica de atualização do projeto
     await updateProjectAction({
       id,
       name: data.name,
@@ -120,10 +125,10 @@ export default function ProjectDetails() {
     <Spinner />
   ) : (
     <form
-      className="flex flex-col gap-2 h-full"
+      className="flex flex-col gap-2 h-full max-h-screen"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="h-full">
+      <div className="h-full flex flex-col overflow-hidden">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -139,16 +144,30 @@ export default function ProjectDetails() {
         </Breadcrumb>
         <h3 className="mt-4 mb-2 text-2xl font-bold">Editar Projeto</h3>
         <div className="flex flex-col gap-2">
-          <div className="space-y-0.5">
-            <Label htmlFor="name">Nome</Label>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 h-3.5">
+              <Label htmlFor="name">Nome</Label>
+              {errors.name && (
+                <span className="text-xs text-destructive">
+                  {errors.name.message}
+                </span>
+              )}
+            </div>
             <Input id="name" {...register('name')} />
           </div>
-          <div className="space-y-0.5">
+          <div className="flex flex-col gap-1">
             <Label htmlFor="description">Descrição</Label>
             <Textarea id="description" {...register('description')} />
           </div>
-          <div className="space-y-0.5">
-            <Label htmlFor="model">Modelo</Label>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 h-3.5">
+              <Label htmlFor="model">Modelo</Label>
+              {errors.model && (
+                <span className="text-xs text-destructive">
+                  {errors.model.message}
+                </span>
+              )}
+            </div>
             <Controller
               control={control}
               name="model"
@@ -162,11 +181,15 @@ export default function ProjectDetails() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {models?.map((model, index) => (
-                        <SelectItem key={index} value={model.name}>
-                          {model.name}
-                        </SelectItem>
-                      ))}
+                      {models ? (
+                        models.map((model, index) => (
+                          <SelectItem key={index} value={model.name}>
+                            {model.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <Spinner />
+                      )}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -188,41 +211,55 @@ export default function ProjectDetails() {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-1 mt-4 h-[420px]">
+        <div className="flex mt-4 flex-col gap-1 flex-1 overflow-hidden">
           <Label>Câmeras Selecionadas:</Label>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">ID</TableHead>
-                <TableHead>Localidade</TableHead>
-                <TableHead className="text-right"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {selectedCameras.map((camera, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">{camera.id}</TableCell>
-                  <TableCell>{camera.name}</TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      type="button"
-                      onClick={() =>
-                        flyTo({
-                          latitude: camera.latitude,
-                          longitude: camera.longitude,
-                          zoom: 16,
-                        })
-                      }
-                    >
-                      <Navigation className="shrink-0 size-4" />
-                    </Button>
-                  </TableCell>
+          <div className="gap-1 flex flex-col overflow-y-scroll">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">ID</TableHead>
+                  <TableHead>Localidade</TableHead>
+                  <TableHead className="text-right"></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {selectedCameras.map((camera, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{camera.id}</TableCell>
+                    <TableCell>{camera.name}</TableCell>
+                    <TableCell className="text-right flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                        onClick={() =>
+                          flyTo({
+                            latitude: camera.latitude,
+                            longitude: camera.longitude,
+                            zoom: 16,
+                          })
+                        }
+                      >
+                        <Navigation className="shrink-0 size-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        type="button"
+                        onClick={() =>
+                          setSelectedCameras(
+                            selectedCameras.filter((c) => c.id !== camera.id),
+                          )
+                        }
+                      >
+                        <X className="size-3.5 shrink-0" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-2">
